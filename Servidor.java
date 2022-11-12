@@ -37,22 +37,22 @@ class Servidor {
 			// instancia o servidor
 			Servidor servidor = new Servidor();
 			System.out.println("Servidor online...");
-			System.out.println("Qual a dificuldade de mineraÁ„o desejada(1 a 10)?");
+			System.out.println("Qual a dificuldade de minera√ß√£o desejada(1 a 10)?");
 			fraseServidor = ler.nextLine();
 			
 			while ((fraseServidor == null) || (Integer.parseInt(fraseServidor) < 1) || (Integer.parseInt(fraseServidor) > 10)) {
-				System.out.println("Comando inv·lido, tente novamente!");
+				System.out.println("Comando inv√°lido, tente novamente!");
 				fraseServidor = ler.nextLine();
 			}
 
-			// instancia o socket de recepÁ„o do servidor
+			// instancia o socket de recep√ß√£o do servidor
 			servidor.serverSocket = new ServerSocket(6789);
 			
 			// instancia o blockchain
 			Blockchain blockchain = new Blockchain(Integer.parseInt(fraseServidor));
 			System.out.println("Blockchain online...");
 
-			System.out.println("Aguardando conex„o do minerador...");
+			System.out.println("Aguardando conex√£o do minerador...");
 			Socket socketMinerador = servidor.aguardaConexao();
 			servidor.addSocketListMinerador(socketMinerador);
 			System.out.println("Minerador conectado...");
@@ -60,7 +60,7 @@ class Servidor {
 			ObjectOutputStream outputMinerador = new ObjectOutputStream(socketMinerador.getOutputStream());
 			ObjectInputStream inputMinerador = new ObjectInputStream(socketMinerador.getInputStream());
 			
-			System.out.println("Aguardando conex„o do cliente...");
+			System.out.println("Aguardando conex√£o do cliente...");
 			Socket socketCliente = servidor.aguardaConexao();
 			servidor.addSocketListCliente(socketCliente);
 			System.out.println("Cliente conectado...");
@@ -69,7 +69,7 @@ class Servidor {
 			ObjectInputStream inputCliente = new ObjectInputStream(socketCliente.getInputStream());
 			
 			while (true) {
-				System.out.println("Aguardando solicitaÁ„o da aplicaÁ„o...");
+				System.out.println("Aguardando solicita√ß√£o da aplica√ß√£o...");
 				servidor.fraseCliente = inputCliente.readUTF();
 				
 				if (servidor.fraseCliente.equals("Fim\n")) {
@@ -77,16 +77,16 @@ class Servidor {
 					outputMinerador.flush();
 					break;
 				} else {
-					System.out.println("SolicitaÁ„o recebida...");
+					System.out.println("Solicita√ß√£o recebida...");
 					
-					//Envia os dados da aplicaÁ„o para o Minerador para ser inserido no bloco
+					//Envia os dados da aplica√ß√£o para o Minerador para ser inserido no bloco
 					outputMinerador.writeUTF(servidor.fraseCliente + "\n");
 					outputMinerador.flush();
 					
 					//Envia o objeto do blockchain para que o minerador possa minerar o bloco
 					System.out.println("Minerando bloco...");
 					outputMinerador.writeObject(blockchain);
-					//outputMinerador.flush();
+					outputMinerador.flush();
 					
 					//Aguarda o minerador responder que finalizou o trabalho
 					servidor.fraseMinerador = inputMinerador.readUTF();
